@@ -1,0 +1,6 @@
+task deployToDev(type: Exec) {
+    workingDir "$rootDir"
+    executable "bash"
+    args "-c", 'helm upgrade --install --namespace prometheus-dev -f helm/shared-prometheus/values-dev.yaml ' +
+            'shared-prometheus helm/shared-prometheus'
+}

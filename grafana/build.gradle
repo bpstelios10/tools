@@ -1,0 +1,12 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:9.4.0'
+    }
+}
+
+project.version = project.properties.getOrDefault('testVersion', "0.12.0")
+apply from: "repo-tasks.gradle"
+apply from: "helm-tasks.gradle"

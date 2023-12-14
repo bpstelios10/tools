@@ -1,0 +1,5 @@
+task deployToDev(type: Exec) {
+    workingDir "$rootDir"
+    executable "bash"
+    args "-c", 'helm upgrade --install --namespace shared-grafana shared-grafana helm/shared-grafana'
+}

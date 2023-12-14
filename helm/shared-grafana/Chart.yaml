@@ -1,0 +1,7 @@
+apiVersion: v2
+name: shared-prometheus
+description: A Helm chart for shared grafana deployment
+
+type: application
+version: 0.14.0
+appVersion: 0.12.0

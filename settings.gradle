@@ -1,0 +1,4 @@
+rootProject.name = 'tools'
+
+include 'prometheus'
+include 'grafana'

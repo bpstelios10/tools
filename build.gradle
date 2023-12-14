@@ -1,0 +1,9 @@
+group 'framework.tools'
+
+wrapper {
+    gradleVersion = "8.5"
+}
+
+subprojects {
+    group 'framework.tools'
+}

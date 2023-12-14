@@ -1,0 +1,122 @@
+#following 3 yml are for allowing prometheus to export labels k8s related.
+#a service account with the proper role is needed
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: shared-prometheus
+  namespace: prometheus-dev
+rules:
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/proxy
+      - services
+      - endpoints
+      - pods
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs: ["get"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shared-prometheus
+  namespace: prometheus-dev
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: shared-prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: shared-prometheus
+subjects:
+  - kind: ServiceAccount
+    name: shared-prometheus
+    namespace: prometheus-dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shared-prometheus
+  labels:
+    app: shared-prometheus
+spec:
+  type: NodePort
+  selector:
+    app: shared-prometheus
+  ports:
+    - port: 9090
+      name: client
+      nodePort: 30007
+  sessionAffinity: None
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shared-prometheus
+  labels:
+    app: shared-prometheus
+spec:
+  replicas: {{ .Values.replicasCount }}
+  selector:
+    matchLabels:
+      app: shared-prometheus
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: shared-prometheus
+    spec:
+      terminationGracePeriodSeconds: 300
+      containers:
+      - name: shared-prometheus
+        image: {{ .Values.image.repository }}
+        securityContext:
+          runAsUser: 0
+        args:
+        - --config.file=/etc/prometheus/{{ .Values.configFile }}
+        - --log.level=debug
+        - --web.enable-lifecycle
+        - --storage.tsdb.retention=7d
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: 0
+          limits:
+            memory: "1Gi"
+        ports:
+        - containerPort: 9090
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: 9090
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 9090
+          initialDelaySeconds: 100
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: prometheus-storage
+          mountPath: /prometheus
+      volumes:
+      - name: prometheus-storage
+        persistentVolumeClaim:
+          claimName: prometheus-storage
+      serviceAccountName: shared-prometheus

@@ -1,0 +1,4 @@
+replicasCount: 1
+
+image:
+  repository: bpstelios10/shared-grafana:0.12.0
