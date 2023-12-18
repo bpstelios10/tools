@@ -3,5 +3,5 @@ name: shared-prometheus
 description: A Helm chart for prometheus deployment
 
 type: application
-version: 0.17.0
-appVersion: 0.13.0
+version: 0.20.0
+appVersion: 0.16.0

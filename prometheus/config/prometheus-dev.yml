@@ -33,7 +33,7 @@ scrape_configs:
     relabel_configs:
       - source_labels: [ __meta_kubernetes_namespace ]
         action: keep
-        regex:  grafana-.*
+        regex:  shared-grafana
       # Extract the Kubernetes "deployment" label as a metric label
       - source_labels: [ __meta_kubernetes_pod_label_deployment ]
         regex: (.*)
@@ -89,10 +89,10 @@ scrape_configs:
     static_configs:
       - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
   - job_name: 'cAdvisor'
-#    scheme: https
-#    tls_config:
-#      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-#    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
     kubernetes_sd_configs:
       - role: node
     relabel_configs:
@@ -103,4 +103,4 @@ scrape_configs:
       - source_labels: [ __meta_kubernetes_node_name ]
         regex: (.+)
         target_label: __metrics_path__
-        replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+        replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor

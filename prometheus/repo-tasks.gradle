@@ -17,9 +17,9 @@ apply plugin: DockerRemoteApiPlugin
 
 project.ext {
     imageName = 'shared-prometheus'
-    dockerUsername = 'bpstelios10'
-    dockerPassword = ''
-    dockerEmail = 'bpstelios10@hotmail.com'
+    dockerUsername = '****'
+    dockerPassword = '****'
+    dockerEmail = '****'
 }
 
 docker {

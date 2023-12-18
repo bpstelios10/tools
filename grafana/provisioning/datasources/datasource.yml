@@ -29,7 +29,7 @@ datasources:
     type: prometheus
     isDefault: false
     access: proxy
-    url: shared-prometheus.prometheus-dev:9090
+    url: http://shared-prometheus.prometheus-dev:9090
     basicAuth: false
     jsonData:
       graphiteVersion: "1.1"

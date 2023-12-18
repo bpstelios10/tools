@@ -2,4 +2,4 @@ replicasCount: 1
 configFile: prometheus-dev.yml
 
 image:
-  repository: bpstelios10/shared-prometheus:0.13.0
+  repository: bpstelios10/shared-prometheus:0.16.0
